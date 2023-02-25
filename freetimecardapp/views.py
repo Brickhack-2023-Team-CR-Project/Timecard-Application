@@ -4,6 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
+#Importing models file for data manipulation
+from freetimecardapp.models import Test
+
 # Create your views here.
 def home(request):
     # return HttpResponse("Hello world")
@@ -66,6 +69,16 @@ def signin(request):
         if(user is not None):
             login(request, user)
             fname = user.first_name
+
+            #Here I am going to test working with creating new record in model table "test"
+            Test.objects.create(name=user.get_username, clock_in_data={'username': user.get_username(), 'clock_in_time': None})
+            number_of_log_ins = Test.objects.filter(name=user.get_username)
+            for log_ins in number_of_log_ins:
+                print("Heres another one! {log_ins.name}")
+            
+            # new_entry = Test(name=user.get_username())
+            # new_entry.save()
+
             return render(request,'freetimecardapp/index.html', {'fname': fname})
         else:
             messages.error(request, "Bad Credentials")
