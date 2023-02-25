@@ -21,7 +21,11 @@ BrickHack 2023 Submission, 24hr coding competition! It is a timecard application
 
 ## How to run
 
-- *Info will go here* 
+- Make sure django is installed on your machine (pip install django)
+- Make sure that virtualenv is installed on your machine (pip install virtualenv)
+- To run the python virtual env use command: source timecard-app/bin/activate 
+
+- To run the webserver, go to the root directory of the project and run this command: (python manage.py runserver)
 
 ## License
 
