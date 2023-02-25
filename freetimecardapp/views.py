@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 def home(request):
@@ -20,6 +20,28 @@ def signup(request):
         password_one = request.POST['pass1']
         password_two = request.POST['pass2']
 
+        #Handling some special cases:
+        if User.objects.filter(username=username):
+            messages.error(request, "Username already in use")
+            return redirect('home')
+        
+        if User.objects.filter(email=email):
+            messages.error(request, "Email already in use")
+            return redirect('home')
+        
+        if len(username) > 10:
+            messages.error(request, "Username must be under 10 characters")
+            return redirect('home')
+
+        if password_one != password_two:
+            messages.error(request, "Passwords did not match")
+            return redirect('home')
+        
+        if not username.isalnum():
+            messages.error(request, "Username must be alphanumeric")
+            return redirect('home')    
+
+        #If all of that passes we create the user
         new_user = User.objects.create_user(username, email, password_one)
         new_user.first_name = first_name
         new_user.last_name = last_name
@@ -31,7 +53,7 @@ def signup(request):
 
         return redirect('signin')
 
-    return render(request, "freetimecardapp/signin.html")
+    return render(request, "freetimecardapp/signup.html")
 
 def signin(request):
 
@@ -52,6 +74,8 @@ def signin(request):
     return render(request, "freetimecardapp/signin.html")
 
 def signout(request):
-    pass
+    logout(request)
+    messages.success(request, "Logged out successfully!")
+    return redirect('home')
 
 
