@@ -88,6 +88,7 @@ def clock_in(request):
     if len(time_punches) == 0:
         #Record the first time
         now = datetime.now()
+        print(now)
         current_time = now.strftime("%H:%M:%S")
         Clock_Data.objects.create(name=current_user.get_username, clock_in_time=current_time)
         messages.success(request, "You have succesfully clocked in at: " + current_time)
@@ -107,7 +108,7 @@ def clock_in(request):
         Clock_Data.objects.create(name=current_user.get_username, clock_in_time=current_time)
         messages.success(request, "You have succesfully clocked in at: " + current_time)
 
-    return render(request,'freetimecardapp/index.html')
+    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name})
 
 def clock_out(request):
     #Get the current user
@@ -127,12 +128,11 @@ def clock_out(request):
             punch.clock_out_time = current_time
             punch.save()
             messages.success(request, "You have succesfully clocked out at: " + current_time)
-        
+            return redirect('home')
+
     #If they havent clocked in yet then they cant clock out
     messages.error(request, "You cannot clock out until you clock in")
     return redirect('home')
-
-    return render(request,'freetimecardapp/index.html')
 
 def clock_history(request):
     #Get the current user
@@ -148,7 +148,7 @@ def clock_history(request):
     for punch in time_punches:
         messages.success(request, punch.clock_in_time + " :: " + str(punch.clock_out_time))
 
-    return render(request,'freetimecardapp/index.html')
+    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name})
 
 
 def signout(request):
