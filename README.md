@@ -30,5 +30,3 @@ BrickHack 2023 Submission, 24hr coding competition! It is a timecard application
 ## License
 
 MIT License
-
-See LICENSE for details.
