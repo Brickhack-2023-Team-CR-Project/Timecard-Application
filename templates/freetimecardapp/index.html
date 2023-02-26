@@ -10,17 +10,160 @@
     rel="stylesheet"
     type="text/css"
     href="{% static 'home/css/bootstrap.css' %}">
-
+    <link rel="stylesheet" href="./dashboard.css" >
     <style>
         .content {
             margin: 15px;
+        }
+
+        .form-control-primary {
+            margin: 10px;
+            opacity: 0.2;
+            border-radius: 2px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            top: 0;
+            z-index: 100;
+            padding: 70px 0 0 10px;
+            border-right: 1px solid #d3d3d3;
+        }
+
+        .left-sidebar {
+            position: sticky;
+            top:0;
+            height: calc(100vh - 70px)
+        }
+
+        .sidebar-nav li .nav-link {
+            color: #333;
+            font-weight: 500;
+        }
+
+        main {
+            padding-top: 90px;
+            /* padding: 15px; */
+        }
+
+        .user-interaction {
+            width: 100%;
+
+        }
+
+        .user-interaction .messages {
+            margin-top: 15px;
+            border-width: 1px;
+            border-radius: 15px;
+            background-color: #c9c9c9;
         }
     </style>
 
     <title>FreeTime Card</title>
 </head>
 <body>
-    <div class="content">
+    {% csrf_token %}
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" style="padding:10px">Freetime Card</a>
+        <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            {% if user.is_authenticated %}
+            <a class="nav-link" href="/signout">Logout</a>
+            {% else %}
+            <a class="nav-link" href="/signin">Sign In</a>
+            {% endif %}
+        </li>
+        </ul>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 bg-light d-none d-md-block sidebar">
+                <div class="left-sidebar">
+                    <ul class="nav flex-column sidebar-nav">
+                        <li class="nav-item">
+                          <a class="nav-link active" href="#">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z" clip-rule="evenodd"/></svg>
+                            Clock in/out
+                          </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                              <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z" clip-rule="evenodd"/></svg>
+                              Overview
+                            </a>
+                          </li>
+
+                        <li class="nav-item">
+                          <a class="nav-link" href="#">
+                            <svg class="bi bi-chevron-right" width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6.646 3.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L12.293 10 6.646 4.354a.5.5 0 010-.708z" clip-rule="evenodd"/></svg>
+                            Settings
+                          </a>
+                        </li>
+                      </ul>
+                </div>
+              </div>
+        </div>
+      </div>
+
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+      <h3>Recent Punches:</h3>
+      <hr>
+      <div class="table-responsive">
+        {% csrf_token %}
+        <table class="table table-dark">
+          <thead>
+            
+            <tr>
+              <th scope="col">Clock in time</th>
+              <th scope="col">Clock in date</th>
+              <th scope="col">Clock out time</th>
+              <th scope="col">Clock out date</th>
+            </tr>
+            
+          </thead>
+          <tbody>
+            {% for punch in punches %}
+            <tr>
+              <td>{{punch.clock_in_time}}</td>
+              <td>{{punch.clock_in_date}}</td>
+              <td>{{punch.clock_out_time}}</td>
+              <td>{{punch.clock_out_date}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="user-interaction">
+            <div class="buttons">
+                <h3>Clock in:</h3>
+                <hr>
+                <h4>Hello {{fname}}...</h4>
+                <a class="btn btn-primary" href="/clock_in" role="button">Clock in</a>
+                <a class="btn btn-primary" href="/clock_out" role="button">Clock out</a>
+            </div>
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{message.tags}} alert-dismissible fade show" rule="alert">
+                    <strong>Message:</strong> {{message}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+      </div>
+    </main>
+
+
+    
+
+    <!-- <div class="content">
         <h1>Freetime Card - Free lance timecard application</h1>
         <hr>
 
@@ -45,6 +188,6 @@
         <br>
         <a class="btn btn-primary" href="/signin" role="button">Log in</a>
         {% endif %}
-    </div>
+    </div> -->
 </body>
 </html>

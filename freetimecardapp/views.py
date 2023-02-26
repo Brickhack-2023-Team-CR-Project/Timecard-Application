@@ -3,7 +3,10 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
+#Importing datetime
 from datetime import datetime
+from datetime import date
 
 #Importing models file for data manipulation
 from freetimecardapp.models import Clock_Data
@@ -66,12 +69,13 @@ def signin(request):
         password = request.POST['pass1']
 
         user = authenticate(username=username,password=password)
+        time_punches = Clock_Data.objects.filter(name=user.get_username)
 
         if(user is not None):
             login(request, user)
             fname = user.first_name
 
-            return render(request,'freetimecardapp/index.html', {'fname': fname})
+            return render(request,'freetimecardapp/index.html', {'fname': fname,'punches':time_punches})
         else:
             messages.error(request, "Bad Credentials")
             return redirect('home')
@@ -84,13 +88,15 @@ def clock_in(request):
     #Get a list of clock in times of the specific user
     time_punches = Clock_Data.objects.filter(name=current_user.get_username)
 
+    now = datetime.now()
+    now_date = date.today()
+    current_date = now_date.strftime("%m/%d/%y")
+    current_time = now.strftime("%H:%M:%S")
+
     #We should have a stipulation for if they have never recorded 
     if len(time_punches) == 0:
         #Record the first time
-        now = datetime.now()
-        print(now)
-        current_time = now.strftime("%H:%M:%S")
-        Clock_Data.objects.create(name=current_user.get_username, clock_in_time=current_time)
+        Clock_Data.objects.create(name=current_user.get_username, clock_in_date=current_date, clock_in_time=current_time)
         messages.success(request, "You have succesfully clocked in at: " + current_time)
     else:
         #If the length is not 0 Loop through the list of clock in data
@@ -106,9 +112,9 @@ def clock_in(request):
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         Clock_Data.objects.create(name=current_user.get_username, clock_in_time=current_time)
-        messages.success(request, "You have succesfully clocked in at: " + current_time)
+        messages.success(request, "You have succesfully clocked in at: " + current_time  + ", " + current_date)
 
-    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name})
+    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name, 'punches':time_punches})
 
 def clock_out(request):
     #Get the current user
@@ -116,23 +122,27 @@ def clock_out(request):
     #Get a list of clock in times of the specific user
     time_punches = Clock_Data.objects.filter(name=current_user.get_username)
 
+    now = datetime.now()
+    now_date = date.today()
+    current_date = now_date.strftime("%m/%d/%y")
+    current_time = now.strftime("%H:%M:%S")
+
     #Loop through the list of clock in data
     for punch in time_punches:
         print(punch.clock_in_time + " :: " + str(punch.clock_out_time))
         #If we find that the user has an empty clockout then...
         if punch.clock_out_time == None:
             #We essnetially do the opposite of the above
-            now = datetime.now()
-            current_time = now.strftime("%H:%M:%S")
             print("Clocking out at: " + current_time)
             punch.clock_out_time = current_time
+            punch.clock_out_date = current_date
             punch.save()
-            messages.success(request, "You have succesfully clocked out at: " + current_time)
-            return redirect('home')
+            messages.success(request, "You have succesfully clocked out at: " + current_time + ", " + current_date)
+            return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name, 'punches':time_punches})
 
     #If they havent clocked in yet then they cant clock out
     messages.error(request, "You cannot clock out until you clock in")
-    return redirect('home')
+    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name, 'punches':time_punches})
 
 def clock_history(request):
     #Get the current user
@@ -146,14 +156,14 @@ def clock_history(request):
 
     #Loop through the list of clock in data
     for punch in time_punches:
-        messages.success(request, punch.clock_in_time + " :: " + str(punch.clock_out_time))
+        messages.success(request, punch.clock_in_time + ", " + punch.clock_in_date + " :: " + str(punch.clock_out_time) + ", " + str(punch.clock_out_date))
 
-    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name})
+    return render(request,'freetimecardapp/index.html',{'fname': current_user.first_name,'punches':time_punches})
 
 
 def signout(request):
     logout(request)
     messages.success(request, "Logged out successfully!")
-    return redirect('home')
+    return redirect('signin')
 
 
