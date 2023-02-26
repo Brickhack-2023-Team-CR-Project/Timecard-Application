@@ -44,7 +44,9 @@
         }
 
         main {
-            padding-top: 90px;
+            padding-top: 70px;
+            padding-left: 20px;
+            padding-right: 20px;
             /* padding: 15px; */
         }
 
@@ -66,7 +68,7 @@
 <body>
     {% csrf_token %}
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" style="padding:10px">Freetime Card</a>
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" style="padding:15px">Freetime Card</a>
         <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
             {% if user.is_authenticated %}
@@ -78,8 +80,8 @@
         </ul>
     </nav>
 
-
-    <div class="container-fluid">
+    <!-- Potential side menu idea -->
+    <!-- <div class="container-fluid">
         <div class="row">
             <div class="col-md-2 bg-light d-none d-md-block sidebar">
                 <div class="left-sidebar">
@@ -108,35 +110,10 @@
                 </div>
               </div>
         </div>
-      </div>
+      </div> -->
 
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-      <h3>Recent Punches:</h3>
-      <hr>
-      <div class="table-responsive">
-        {% csrf_token %}
-        <table class="table table-dark">
-          <thead>
-            
-            <tr>
-              <th scope="col">Clock in time</th>
-              <th scope="col">Clock in date</th>
-              <th scope="col">Clock out time</th>
-              <th scope="col">Clock out date</th>
-            </tr>
-            
-          </thead>
-          <tbody>
-            {% for punch in punches %}
-            <tr>
-              <td>{{punch.clock_in_time}}</td>
-              <td>{{punch.clock_in_date}}</td>
-              <td>{{punch.clock_out_time}}</td>
-              <td>{{punch.clock_out_date}}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <main role="main"> <!--ADD THIS? class="col-md-9 ml-sm-auto col-lg-10 px-4" -->
+
         <div class="user-interaction">
             <div class="buttons">
                 <h3>Clock in:</h3>
@@ -156,6 +133,36 @@
                 {% endfor %}
             </div>
         </div>
+
+      <h3>Recent Punches:</h3>
+      <hr>
+      <div class="table-responsive">
+        {% csrf_token %}
+        <table class="table table-dark">
+          <thead>
+            
+            <tr>
+              <th scope="col">Clock in time</th>
+              <th scope="col">Clock in date</th>
+              <th scope="col">Clock out time</th>
+              <th scope="col">Clock out date</th>
+              <th scope="col">Options</th>
+            </tr>
+            
+          </thead>
+          <tbody>
+            {% for punch in punches %}
+            <tr>
+              <td style="margin-left: 15px;">{{punch.clock_in_time}}</td>
+              <td>{{punch.clock_in_date}}</td>
+              <td>{{punch.clock_out_time}}</td>
+              <td>{{punch.clock_out_date}}</td>
+              <td><button id='closeModal' type="button" class="btn btn-outline-danger" style="margin-right: 5px;">Remove</button>
+                <button id='closeModal' type="button" class="btn btn-outline-info">Edit</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
         
       </div>
     </main>
