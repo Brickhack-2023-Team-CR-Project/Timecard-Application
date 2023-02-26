@@ -1,24 +1,47 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link
+    rel="stylesheet"
+    type="text/css"
+    href="{% static 'home/css/bootstrap.css' %}">
+
+    <style>
+        .content {
+            align-content: center;
+            margin: 25px;
+            width: 350px;
+            height: 200px;
+        }
+    </style>
+    <title>Freetime Card Sign In</title>
 </head>
 <body>
-    <h3> Sign in </h3>
-    <form action="/signin" method="post">
-    {% csrf_token %}
-        <label for="">Username:</label>
-        <input type="text" id="username" name="username" placeholder="input your username" required>
-        <br>
-        <label for="">Password:</label>
-        <input type="password" id="pass1" name="pass1" placeholder="input your password" required>
-        <br>
-        <button type="submit">Sign in</button>
-    </form>
+    <div class="content">
+        <h3> Sign in </h3>
+        <form action="/signin" method="post">
+        {% csrf_token %}
+        
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+                <input type="text" id="username" name="username" class="form-control" />
+                <label class="form-label" for="username">Username</label>
+            </div>
 
-    <button><a href="/">Go back to home</a></button>
+            <!-- Password input -->
+            <div class="form-outline mb-4">
+                <input type="password" id="pass1" name="pass1" class="form-control" />
+                <label class="form-label" for="pass1">Password</label>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+        </form>
+    </div>
 </body>
 </html>
